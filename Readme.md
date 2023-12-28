@@ -37,7 +37,7 @@ cd tm-extractor
 
 ### Command Line
 
-Run the script from the command line with the following options:
+Head over to [Env](#environment-variables) to verify you have setup correct env variables & Run the script from the command line with the following options:
 
 - For Specific TM Projects : 
 
@@ -50,6 +50,8 @@ python tm-extractor.py --projects 123 456 789
 ```bash
 python tm-extractor.py --fetch-active-projects 24
 ```
+
+You can set it up as systemd service or cronjob in your PC if required or run manually.
 
 ### AWS Lambda
 
@@ -87,6 +89,11 @@ python tm-extractor.py --fetch-active-projects 24
 
 Set the following environment variables for proper configuration:
 
+Example : 
+```bash
+export RAWDATA_API_AUTH_TOKEN='my_token'
+```
+
 - **`RAWDATA_API_AUTH_TOKEN`**: API token for Raw Data API authentication, Request admins for yours to [RAW DATA API](https://github.com/hotosm/raw-data-api/)
 
 - **`RAW_DATA_API_BASE_URL`**: Base URL for the Raw Data API. Default is `https://api-prod.raw-data.hotosm.org/v1`.
@@ -113,13 +120,13 @@ The `config.json` file contains configuration settings for the extraction proces
 Defines the geographical area for extraction. Typically auto-populated with Tasking Manager (TM) geometry.
 
 #### `queue`
-Specifies the Raw Data API queue, often set as "raw_default" for default processing.
+Specifies the Raw Data API queue, often set as "raw_default" for default processing, This can be changed if there is disaster activation and special services are deployed so that those requests can be prioritized.
 
 #### `dataset`
 Contains information about the dataset:
-- `dataset_prefix`: Prefix for the dataset name.
-- `dataset_folder`: Folder within TM for the dataset.
-- `dataset_title`: Title of the Tasking Manager project.
+- `dataset_prefix`: Prefix for the dataset extraction eg : hotosm_project_123.
+- `dataset_folder`: Default Mother folder to place during extraction eg : TM , Mindful to change this.
+- `dataset_title`: Title of the Tasking Manager project eg : Tasking Manger Project 123.
 
 #### `categories`
 Array of extraction categories, each represented by a dictionary with:
