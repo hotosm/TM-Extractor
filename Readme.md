@@ -29,8 +29,8 @@ Make sure you have python3 installed on your system
 - Clone the repository and cd 
 
 ```bash
-git clone https://github.com/your-username/project-processor.git
-cd 
+git clone https://github.com/kshitijrajsharma/tm-extractor
+cd tm-extractor
 ```
 
 ## Usage
