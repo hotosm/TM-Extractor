@@ -28,8 +28,8 @@ Make sure you have python3 installed on your system
 - Clone the repository and cd 
 
 ```bash
-git clone https://github.com/kshitijrajsharma/tm-extractor
-cd tm-extractor
+git clone https://github.com/kshitijrajsharma/TM-Extractor
+cd TM-Extractor
 ```
 
 ## Usage
