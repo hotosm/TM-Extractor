@@ -43,7 +43,10 @@ class ProjectProcessor:
 
     def get_mapping_list(self, input_value):
         if isinstance(input_value, int):
-            return self.MAPPING_TYPES.get(input_value)
+            input_value+=1
+            if 0 <= input_value < len(self.MAPPING_TYPES):
+                return list(self.MAPPING_TYPES.values())[input_value]
+            return None
         return self.MAPPING_TYPES.get(input_value.upper())
 
     def generate_filtered_config(self, project_id, mapping_types, geometry):
@@ -69,7 +72,7 @@ class ProjectProcessor:
 
     def retry_post_request(self, request_config):
         retry_strategy = Retry(
-            total=3,  # Number of retries
+            total=1,  # Number of retries
             status_forcelist=[429],
             allowed_methods=["POST"], 
             backoff_factor=1 
@@ -90,7 +93,39 @@ class ProjectProcessor:
 
     def handle_rate_limit(self):
         logging.warning("Rate limit reached. Waiting for 1 minute before retrying.")
-        time.sleep(60)
+        time.sleep(61)
+
+    def retry_get_request(self, url):
+        try:
+            response = requests.get(url, headers=self.HEADERS, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            logging.error("Error in GET request: %s", str(e))
+            return {}
+
+    def track_tasks_status(self, task_ids):
+        results = {}
+
+        for task_id in task_ids:
+            status_url = f'{self.RAW_DATA_API_BASE_URL}/tasks/status/{task_id}/'
+            response = self.retry_get_request(status_url)
+
+            if response['status'] == 'SUCCESS':
+                results[task_id] = response['result']
+            elif response['status'] in ['PENDING', 'STARTED']:
+                logging.warning("Task %s is still in progress. Retrying in 30 seconds...", task_id)
+                time.sleep(30)
+                response = self.retry_get_request(status_url)
+                if response['status'] == 'SUCCESS':
+                    results[task_id] = response['result']
+                else:
+                    results[task_id] = 'FAILURE'
+            else:
+                results[task_id] = 'FAILURE'
+        logging.info("All tasks are completed, dumping result")
+        with open('result.json', 'w') as f:
+            json.dump(results, f, indent=2)
 
     def get_project_details(self, project_id):
         feature = {'type': 'Feature','properties':{}}
@@ -107,7 +142,7 @@ class ProjectProcessor:
         active_projects_api_url = f'{self.TM_API_BASE_URL}/projects/queries/active/?interval={time_interval}'
         response = requests.get(active_projects_api_url)
         response.raise_for_status()
-        return json.loads(response.json())['features']
+        return response.json()['features']
 
     def init_call(self, projects=None, fetch_active_projects=None):
         all_project_details = []
@@ -126,15 +161,19 @@ class ProjectProcessor:
         task_ids = [self.process_project(project) for project in all_project_details if self.process_project(project) is not None]
         logging.info("Fetch: RawData API is Done, Logging task_ids")
         logging.info(task_ids)
+        return task_ids
 
 def lambda_handler(event, context):
     config_json = os.environ.get("CONFIG_JSON", None)
     if config_json is None:
         raise ValueError("Config JSON couldn't be found in env")
 
-    project_processor = ProjectProcessor(config_json)
-    project_processor.init_call(projects=event.get('projects'), fetch_active_projects=event.get('fetch_active_projects'))
+    projects = event.get('projects', None)
+    fetch_active_projects = event.get('fetch_active_projects', 24)
 
+    project_processor = ProjectProcessor(config_json)
+    project_processor.init_call(projects=projects, fetch_active_projects=fetch_active_projects)
+    
 def main():
     parser = argparse.ArgumentParser(description="Triggers extraction request for tasking manager projects")
 
@@ -142,15 +181,15 @@ def main():
     group.add_argument("--projects", nargs="+", type=int, help="List of project IDs, add multiples by space")
     group.add_argument("--fetch-active-projects", nargs="?", const=24, type=int, metavar="interval",
                        help="Fetch active projects with an optional interval (default is 24), unit is in hour")
-
+    parser.add_argument("--track", action="store_true", default=False, help="Track the status of tasks and dumps result, Use it carefully as it waits for all tasks to complete")
     args = parser.parse_args()
-    if not args.projects and not args.fetch_active_projects:
-        raise ValueError("Either --projects or --fetch-active-projects must be passed.")
 
     config_json = os.environ.get("CONFIG_JSON", 'config.json')
 
     project_processor = ProjectProcessor(config_json)
-    project_processor.init_call(projects=args.projects, fetch_active_projects=args.fetch_active_projects)
+    task_ids=project_processor.init_call(projects=args.projects, fetch_active_projects=args.fetch_active_projects)
+    if args.track:
+        project_processor.track_tasks_status(task_ids)
 
 if __name__ == "__main__":
     main()

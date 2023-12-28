@@ -39,8 +39,16 @@ cd tm-extractor
 
 Run the script from the command line with the following options:
 
+- For Specific TM Projects : 
+
 ```bash
 python tm-extractor.py --projects 123 456 789
+```
+
+- For fetching active projects within last 24hr
+
+```bash
+python tm-extractor.py --fetch-active-projects 24
 ```
 
 ### AWS Lambda
@@ -135,3 +143,4 @@ The script is designed to trigger extraction requests for Tasking Manager projec
 - Supports both command line and AWS Lambda execution.
 - Dynamically fetches project details, including mapping types and geometry, from the Tasking Manager API.
 - Configurable extraction settings using a `config.json` file.
+- Helps debugging the service and track the api requests
