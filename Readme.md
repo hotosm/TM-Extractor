@@ -20,7 +20,6 @@ The **TM Extractor** script is designed to trigger extraction requests for Taski
 ### Prerequisites
 
 - Python 3.x
-- pip (Python package installer)
 - Access token for Raw Data API
 
 ### Installation
