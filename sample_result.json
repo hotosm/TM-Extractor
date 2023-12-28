@@ -1,0 +1,110 @@
+{
+  "a221affc-0e50-4231-92b5-3d0f4438f170": {
+    "datasets": [
+      {
+        "Waterways": {
+          "resources": [
+            {
+              "name": "hotosm_project_9_waterways_lines_geojson.zip",
+              "format": "geojson",
+              "description": "GeoJSON",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_geojson.zip",
+              "last_modifed": "2023-12-28T17:48:21.378667"
+            },
+            {
+              "name": "hotosm_project_9_waterways_lines_kml.zip",
+              "format": "kml",
+              "description": "KML",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_kml.zip",
+              "last_modifed": "2023-12-28T17:48:21.378974"
+            },
+            {
+              "name": "hotosm_project_9_waterways_lines_shp.zip",
+              "format": "shp",
+              "description": "ESRI Shapefile",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_shp.zip",
+              "last_modifed": "2023-12-28T17:48:21.379216"
+            },
+            {
+              "name": "hotosm_project_9_waterways_polygons_kml.zip",
+              "format": "kml",
+              "description": "KML",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/polygons/hotosm_project_9_waterways_polygons_kml.zip",
+              "last_modifed": "2023-12-28T17:48:21.379453"
+            },
+            {
+              "name": "hotosm_project_9_waterways_polygons_geojson.zip",
+              "format": "geojson",
+              "description": "GeoJSON",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/polygons/hotosm_project_9_waterways_polygons_geojson.zip",
+              "last_modifed": "2023-12-28T17:48:21.379663"
+            },
+            {
+              "name": "hotosm_project_9_waterways_polygons_shp.zip",
+              "format": "shp",
+              "description": "ESRI Shapefile",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/polygons/hotosm_project_9_waterways_polygons_shp.zip",
+              "last_modifed": "2023-12-28T17:48:21.379871"
+            }
+          ]
+        }
+      }
+    ],
+    "elapsed_time": "11 seconds",
+    "started_at": "2023-12-28T17:48:10.076621"
+  },
+  "d4a7b293-c26c-4e4b-8e18-e04e81355152": {
+    "datasets": [
+      {
+        "Waterways": {
+          "resources": [
+            {
+              "name": "hotosm_project_17_waterways_lines_kml.zip",
+              "format": "kml",
+              "description": "KML",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/lines/hotosm_project_17_waterways_lines_kml.zip",
+              "last_modifed": "2023-12-28T17:48:34.455668"
+            },
+            {
+              "name": "hotosm_project_17_waterways_lines_geojson.zip",
+              "format": "geojson",
+              "description": "GeoJSON",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/lines/hotosm_project_17_waterways_lines_geojson.zip",
+              "last_modifed": "2023-12-28T17:48:34.455934"
+            },
+            {
+              "name": "hotosm_project_17_waterways_lines_shp.zip",
+              "format": "shp",
+              "description": "ESRI Shapefile",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/lines/hotosm_project_17_waterways_lines_shp.zip",
+              "last_modifed": "2023-12-28T17:48:34.456152"
+            },
+            {
+              "name": "hotosm_project_17_waterways_polygons_geojson.zip",
+              "format": "geojson",
+              "description": "GeoJSON",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/polygons/hotosm_project_17_waterways_polygons_geojson.zip",
+              "last_modifed": "2023-12-28T17:48:34.456369"
+            },
+            {
+              "name": "hotosm_project_17_waterways_polygons_kml.zip",
+              "format": "kml",
+              "description": "KML",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/polygons/hotosm_project_17_waterways_polygons_kml.zip",
+              "last_modifed": "2023-12-28T17:48:34.456584"
+            },
+            {
+              "name": "hotosm_project_17_waterways_polygons_shp.zip",
+              "format": "shp",
+              "description": "ESRI Shapefile",
+              "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_17/waterways/polygons/hotosm_project_17_waterways_polygons_shp.zip",
+              "last_modifed": "2023-12-28T17:48:34.456798"
+            }
+          ]
+        }
+      }
+    ],
+    "elapsed_time": "10 seconds",
+    "started_at": "2023-12-28T17:48:23.481416"
+  }
+}

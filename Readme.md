@@ -13,7 +13,7 @@ The **TM Extractor** script is designed to trigger extraction requests for Taski
   - [Environment Variables](#environment-variables)
   - [Config JSON](#config-json)
 - [Script Overview](#script-overview)
-
+- [Result Path](#result-path)
 
 ## Getting Started
 
@@ -154,3 +154,25 @@ The script is designed to trigger extraction requests for Tasking Manager projec
 - Dynamically fetches project details, including mapping types and geometry, from the Tasking Manager API.
 - Configurable extraction settings using a `config.json` file.
 - Helps debugging the service and track the api requests
+
+
+## Result Path 
+
+- Your export download link will be generated based on the config , with raw-data-api logic it will be ```Base_download_url```/```dataset_folder```/```dataset_prefix```/```Category_name```/```feature_type```/```dataset_prefix_category_name_export_format.zip```
+- Example for Waterways configuration :
+Here Category Name is ```Waterways```, dataset_prefix is ```hotosm_project_9```, dataset_folder is ```TM``` , feature_type is ```lines``` and export format is ```geojson```
+
+```json
+"Waterways": {
+    "resources": [
+    {
+        "name": "hotosm_project_9_waterways_lines_geojson.zip",
+        "format": "geojson",
+        "description": "GeoJSON",
+        "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_geojson.zip",
+        "last_modifed": "2023-12-28T17:48:21.378667"
+    },
+    ]
+}
+```
+See [sample result](./sample_result.json) to go through how result will look like
