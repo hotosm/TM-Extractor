@@ -169,7 +169,7 @@ Here Category Name is ```Waterways```, dataset_prefix is ```hotosm_project_9```,
         "name": "hotosm_project_9_waterways_lines_geojson.zip",
         "format": "geojson",
         "description": "GeoJSON",
-        "url": "https://s3.us-east-1.amazonaws.com/exports-stage.hotosm.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_geojson.zip",
+        "url": "https://s3.sample.your_domain.org/TM/hotosm_project_9/waterways/lines/hotosm_project_9_waterways_lines_geojson.zip",
         "last_modifed": "2023-12-28T17:48:21.378667"
     },
     ]
