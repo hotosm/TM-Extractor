@@ -1,6 +1,6 @@
 # TM Extractor
 
-The **TM Extractor** script is designed to trigger extraction requests for Tasking Manager projects. It utilizes the HotOSM Tasking Manager API and the Raw Data API for data extraction.
+The **TM Extractor** script is designed to trigger extraction requests for Tasking Manager projects. It utilizes the HOTOSM Tasking Manager API and the Raw Data API for data extraction.
 
 ## Table of Contents
 - [Getting Started](#getting-started)
