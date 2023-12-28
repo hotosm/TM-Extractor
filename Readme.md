@@ -51,6 +51,12 @@ python tm-extractor.py --projects 123 456 789
 python tm-extractor.py --fetch-active-projects 24
 ```
 
+- For tracking request and Dumping result
+
+```bash
+python tm-extractor.py --projects 123 --track
+```
+
 You can set it up as systemd service or cronjob in your PC if required or run manually.
 
 ### AWS Lambda
