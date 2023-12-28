@@ -62,20 +62,18 @@ You can set it up as systemd service or cronjob in your PC if required or run ma
 
 1. **Create an AWS Lambda Function:**
 
-   - In the AWS Management Console, navigate to the Lambda service.
-   - Click on "Create function" and choose "Author from scratch."
-   - Enter a name for your function and choose an existing role or create a new one with the necessary permissions.
+   - In the AWS Management Console, navigate to the Lambda service, Choose role and create one with necessary permissions 
 
 2. **Set Environment Variables:**
 
    - Add the following environment variables to your Lambda function configuration:
 
      - `CONFIG_JSON`: Path to the config JSON file. Default is `config.json`.
-     - Refer to [Configurations](#configuration) for more env variables
+     - Refer to [Configurations](#configuration) for more env variables as required
 
 3. **Deploy the Script as a Lambda Function:**
 
-   - Zip the contents of your project, excluding virtual environments and unnecessary files.
+   - Zip the contents of your project, excluding virtual environments and unnecessary files (Including config.json)
    - Upload the zip file to your Lambda function.
 
 4. **Configure Lambda Trigger:**
@@ -86,7 +84,7 @@ You can set it up as systemd service or cronjob in your PC if required or run ma
 
    - Trigger the Lambda function manually or wait for the configured event source to invoke it.
 
-   Your Lambda function will execute the script with the provided configurations.
+   Your Lambda function should be able to execute the script with the provided configurations.
 
 ## Configuration
 
