@@ -102,7 +102,7 @@ class ProjectProcessor:
             return response.json()
         except requests.exceptions.RequestException as e:
             logging.error("Error in GET request: %s", str(e))
-            return {}
+            return {'status':'ERROR'}
 
     def track_tasks_status(self, task_ids):
         results = {}
@@ -114,16 +114,16 @@ class ProjectProcessor:
             if response['status'] == 'SUCCESS':
                 results[task_id] = response['result']
             elif response['status'] in ['PENDING', 'STARTED']:
-                logging.warning("Task %s is still in progress. Retrying in 30 seconds...", task_id)
-                time.sleep(30)
-                response = self.retry_get_request(status_url)
-                if response['status'] == 'SUCCESS':
-                    results[task_id] = response['result']
-                else:
-                    results[task_id] = 'FAILURE'
+                while True:
+                    response = self.retry_get_request(status_url)
+                    if response['status'] in ['SUCCESS','ERROR','FAILURE'] :
+                        results[task_id] = response['result']
+                        break
+                    logging.warning("Task %s is %s. Retrying in 30 seconds...", task_id,response['status'])
+                    time.sleep(30)
             else:
                 results[task_id] = 'FAILURE'
-        logging.info("All tasks are completed, dumping result")
+        logging.info("All tasks stats is fetched, dumping result")
         with open('result.json', 'w') as f:
             json.dump(results, f, indent=2)
 
