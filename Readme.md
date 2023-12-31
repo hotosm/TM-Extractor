@@ -96,7 +96,7 @@ You can run streamlit app to use frontend
 pip install streamlit
 streamlit run streamlit_app.py
 ```
-2. Use hosted Service go to [tm-extractor.streamlit.app]() 
+2. Use hosted Service go to [tm-extractor.streamlit.app](https://tm-extractor.streamlit.app/) 
 
 ## Configuration
 
