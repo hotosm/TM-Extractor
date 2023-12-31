@@ -9,6 +9,7 @@ The **TM Extractor** script is designed to trigger extraction requests for Taski
 - [Usage](#usage)
   - [Command Line](#command-line)
   - [AWS Lambda](#aws-lambda)
+  - [Streamlit APP](#streamlit)
 - [Configuration](#configuration)
   - [Environment Variables](#environment-variables)
   - [Config JSON](#config-json)
@@ -41,19 +42,19 @@ Head over to [Env](#environment-variables) to verify you have setup correct env 
 - For Specific TM Projects : 
 
 ```bash
-python tm-extractor.py --projects 123 456 789
+python tm_extractor.py --projects 123 456 789
 ```
 
 - For fetching active projects within last 24hr
 
 ```bash
-python tm-extractor.py --fetch-active-projects 24
+python tm_extractor.py --fetch-active-projects 24
 ```
 
 - For tracking request and Dumping result
 
 ```bash
-python tm-extractor.py --projects 123 --track
+python tm_extractor.py --projects 123 --track
 ```
 
 You can set it up as systemd service or cronjob in your PC if required or run manually.
@@ -85,6 +86,17 @@ You can set it up as systemd service or cronjob in your PC if required or run ma
    - Trigger the Lambda function manually or wait for the configured event source to invoke it.
 
    Your Lambda function should be able to execute the script with the provided configurations.
+
+### Streamlit
+
+You can run streamlit app to use frontend 
+
+1. Run Locally 
+```bash
+pip install streamlit
+streamlit run streamlit_app.py
+```
+2. Use hosted Service go to [tm-extractor.streamlit.app]() 
 
 ## Configuration
 
