@@ -77,7 +77,29 @@ def main():
     if show_config_button:
         st.json(config_data)
 
-    project_ids = st.text_input("Enter project IDs (comma-separated):")
+    project_ids_input = st.text_input("Enter project IDs (comma-separated):")
+    project_ids = [
+        int(project_id.strip())
+        for project_id in project_ids_input.split(",")
+        if project_id.strip()
+    ]
+
+    fetch_projects = st.checkbox("Fetch projects from TM API")
+    if fetch_projects:
+        search_text = st.text_input("Search for projects:", value="")
+        projects_data = fetch_projects_from_tm(tm_api_base_url, search_text)
+        selected_project_ids_and_names = st.multiselect(
+            "Select projects:",
+            [
+                {
+                    "Name": f"{project['name']}",
+                    "ID": project["projectId"],
+                }
+                for project in projects_data
+            ],
+        )
+        selected_project_ids = [item["ID"] for item in selected_project_ids_and_names]
+        project_ids.extend(selected_project_ids)
 
     fetch_active_projects = st.checkbox("Fetch active projects")
     interval = None
@@ -101,11 +123,7 @@ def main():
 
             projects_list = None
             if project_ids:
-                projects_list = [
-                    int(project_id.strip())
-                    for project_id in project_ids.split(",")
-                    if project_id.strip()
-                ]
+                projects_list = project_ids
 
             task_ids = project_processor.init_call(
                 projects=projects_list, fetch_active_projects=interval
@@ -129,6 +147,15 @@ def main():
                     st.warning("Result file not found.")
             st.success(f"Extraction Completed. Task IDs: {task_ids}")
             extraction_in_progress = False
+
+
+def fetch_projects_from_tm(tm_api_base_url, search_text):
+    projects_url = f"{tm_api_base_url}/projects/?textSearch={search_text}&action=any"
+    response = requests.get(projects_url)
+    response.raise_for_status()
+    projects_data = response.json().get("results", [])
+
+    return projects_data
 
 
 if __name__ == "__main__":
