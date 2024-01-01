@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 import logging
 import os
@@ -54,27 +55,46 @@ class ProjectProcessor:
         return self.MAPPING_TYPES.get(input_value.upper())
 
     def generate_filtered_config(self, project_id, mapping_types, geometry):
-        self.config["dataset"]["dataset_prefix"] = f"hotosm_project_{project_id}"
-        self.config["dataset"]["dataset_title"] = f"Tasking Manger Project {project_id}"
-        self.config["categories"] = [
-            {key: category[key] for key in mapping_types if key in category}
-            for category in self.config.get("categories", [])
+        config_temp = copy.deepcopy(self.config)
+        config_temp["dataset"]["dataset_prefix"] = f"hotosm_project_{project_id}"
+        config_temp["dataset"]["dataset_title"] = f"Tasking Manger Project {project_id}"
+
+        categories_list = config_temp.get("categories", [])
+
+        def extract_values(categories_list, key):
+            return next(
+                (category[key] for category in categories_list if key in category), None
+            )
+
+        extracted_values = {
+            key: extract_values(categories_list, key) for key in set(mapping_types)
+        }
+        modified_categories = [
+            {key: value} for key, value in extracted_values.items() if value
         ]
-        self.config["geometry"] = geometry
-        return json.dumps(self.config)
+
+        config_temp.update({"categories": modified_categories, "geometry": geometry})
+
+        return json.dumps(config_temp)
 
     def process_project(self, project):
         geometry = project["geometry"]
         project_id = project["properties"].get("project_id")
 
-        mapping_types = [
-            self.get_mapping_list(item)
-            for item in project["properties"].get("mapping_types")
-            if self.get_mapping_list(item) is not None
-        ]
+        mapping_types = []
+        for item in project["properties"].get("mapping_types"):
+            mapping_type_return = self.get_mapping_list(item)
+            if mapping_type_return is not None:
+                mapping_types.append(mapping_type_return)
+
         if len(mapping_types) > 0:
             request_config = self.generate_filtered_config(
                 project_id=project_id, mapping_types=mapping_types, geometry=geometry
+            )
+            logging.info(
+                "Sending Request to Rawdataapi for %s with %s",
+                project_id,
+                mapping_types,
             )
             response = self.retry_post_request(request_config)
             return response
@@ -98,22 +118,22 @@ class ProjectProcessor:
             req_session.mount("https://", adapter)
             req_session.mount("http://", adapter)
 
-            try:
-                HEADERS = {
-                    "Content-Type": "application/json",
-                    "Access-Token": self.RAWDATA_API_AUTH_TOKEN,
-                }
-                response = req_session.post(
-                    self.RAW_DATA_SNAPSHOT_URL,
-                    headers=HEADERS,
-                    data=request_config,
-                    timeout=10,
-                )
-                response.raise_for_status()
-                return response.json()["task_id"]
-            except requests.exceptions.RetryError as e:
-                self.handle_rate_limit()
-                return self.retry_post_request(request_config)
+        try:
+            HEADERS = {
+                "Content-Type": "application/json",
+                "Access-Token": self.RAWDATA_API_AUTH_TOKEN,
+            }
+            response = req_session.post(
+                self.RAW_DATA_SNAPSHOT_URL,
+                headers=HEADERS,
+                data=request_config,
+                timeout=10,
+            )
+            response.raise_for_status()
+            return response.json()["task_id"]
+        except requests.exceptions.RetryError as e:
+            self.handle_rate_limit()
+            return self.retry_post_request(request_config)
 
     def handle_rate_limit(self):
         logging.warning("Rate limit reached. Waiting for 1 minute before retrying.")
@@ -151,14 +171,15 @@ class ProjectProcessor:
                     time.sleep(30)
             else:
                 results[task_id] = "FAILURE"
-        logging.info("All tasks stats is fetched, dumping result")
+        logging.info("All tasks stats is fetched, Dumping result")
         with open("result.json", "w") as f:
             json.dump(results, f, indent=2)
+        logging.info("Done ! Find result at result.json")
 
     def get_project_details(self, project_id):
         feature = {"type": "Feature", "properties": {}}
         project_api_url = f"{self.TM_API_BASE_URL}/projects/{project_id}/?as_file=false&abbreviated=false"
-        response = requests.get(project_api_url)
+        response = requests.get(project_api_url, timeout=20)
         response.raise_for_status()
         result = response.json()
         feature["properties"]["mapping_types"] = result["mappingTypes"]
@@ -170,7 +191,7 @@ class ProjectProcessor:
         active_projects_api_url = (
             f"{self.TM_API_BASE_URL}/projects/queries/active/?interval={time_interval}"
         )
-        response = requests.get(active_projects_api_url)
+        response = requests.get(active_projects_api_url, timeout=10)
         response.raise_for_status()
         return response.json()["features"]
 
@@ -179,7 +200,7 @@ class ProjectProcessor:
 
         if projects:
             for project_id in projects:
-                logger.info(f"Retrieving project {project_id}")
+                logger.info("Retrieving TM project %s", project_id)
                 all_project_details.append(
                     self.get_project_details(project_id=project_id)
                 )
@@ -187,17 +208,21 @@ class ProjectProcessor:
         if fetch_active_projects:
             interval = fetch_active_projects
             logger.info(
-                f"Retrieving active projects with an interval of the last {interval} hr"
+                "Retrieving active projects with an interval of the last %s hr",
+                interval,
             )
             all_project_details.extend(self.get_active_projects(interval))
 
         logger.info("Total %s projects fetched", len(all_project_details))
-        task_ids = [
-            self.process_project(project)
-            for project in all_project_details
-            if self.process_project(project) is not None
-        ]
-        logging.info("Fetch: RawData API is Done, Logging task_ids")
+        task_ids = []
+        for project in all_project_details:
+            task_id = self.process_project(project)
+            if task_id is not None:
+                task_ids.append(task_id)
+        logging.info(
+            "Request : All request to Raw Data API has been sent, Logging %s task_ids",
+            len(task_ids),
+        )
         logging.info(task_ids)
         return task_ids
 
