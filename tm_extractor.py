@@ -162,6 +162,11 @@ class ProjectProcessor:
                     response = self.retry_get_request(status_url)
                     if response["status"] in ["SUCCESS", "ERROR", "FAILURE"]:
                         results[task_id] = response["result"]
+                        logging.info(
+                            "Task %s is %s , Moving to fetch next one",
+                            task_id,
+                            response["status"],
+                        )
                         break
                     logging.warning(
                         "Task %s is %s. Retrying in 30 seconds...",
