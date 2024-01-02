@@ -48,7 +48,7 @@ class ProjectProcessor:
 
     def get_mapping_list(self, input_value):
         if isinstance(input_value, int):
-            input_value += 1
+            input_value -= 1
             if 0 <= input_value < len(self.MAPPING_TYPES):
                 return list(self.MAPPING_TYPES.values())[input_value]
             return None
