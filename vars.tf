@@ -62,7 +62,7 @@ variable "rawdata_api_auth_token" {
 
 # To be Exported from environment as TG_raw_data_api, from circleci or gh actions.
 variable "raw_data_api" {
-   type = strings
+   type = string
    description = "Link to raw data api"
    default = "https://api-prod.raw-data.hotosm.org/v1"
 }
