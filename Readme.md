@@ -87,6 +87,27 @@ You can set it up as systemd service or cronjob in your PC if required or run ma
 
    Your Lambda function should be able to execute the script with the provided configurations.
 
+### Using Terraform
+
+1. **Download & install Terraform:**
+
+   - Install terraform [here.](https://developer.hashicorp.com/terraform/install)
+
+2. **Create AWS Credentials**
+
+   - Create an IAM programmatic user :
+
+     - Configure .aws/credentials or use AWS Environment varibles for terraform authentication. [Check Here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+
+3. **Environment Variables**
+You can set terraform input variables using `TF_VAR_<varible-name-from-vars.tf>` if you don't want to provide them each time.
+
+4. **Run Terraform Plan/Apply**
+   - Run `terraform init` to download required providers
+   - Run `terraform plan` plan to check for infrastructure changes.
+   - Run `terraform apply` to apply terraform configurations.
+
+> **_NOTE:_**  Check `main.tf` for resources terraform creates.
 ### Streamlit
 
 You can run streamlit app to use frontend 
