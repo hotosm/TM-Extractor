@@ -176,7 +176,7 @@ class ProjectProcessor:
                     time.sleep(30)
             else:
                 results[task_id] = "FAILURE"
-        logging.info("All tasks stats is fetched, Dumping result")
+        logging.info("%s tasks stats is fetched, Dumping result", len(results))
         with open("result.json", "w") as f:
             json.dump(results, f, indent=2)
         logging.info("Done ! Find result at result.json")
