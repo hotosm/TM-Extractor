@@ -29,7 +29,7 @@ def convert_elapsed_time_to_seconds(elapsed_time_str):
 
 
 def process_json(json_data):
-    dataset_counts = defaultdict(int)
+    resource_counts = defaultdict(int)
     total_datasets = 0
     total_resources = 0
     successful_tasks = 0
@@ -58,7 +58,7 @@ def process_json(json_data):
         for dataset in datasets:
             for dataset_name, resources in dataset.items():
                 total_resources += len(resources["resources"])
-                dataset_counts[dataset_name] += len(resources["resources"])
+                resource_counts[dataset_name] += len(resources["resources"])
 
     total_elapsed_time = max(end_times) - min(start_times)
 
@@ -69,7 +69,7 @@ def process_json(json_data):
         "total_datasets": total_datasets,
         "total_resources": total_resources,
         "total_elapsed_time": str(total_elapsed_time),
-        "dataset_counts": dict(dataset_counts),
+        "resource_counts": dict(resource_counts),
     }
 
 
