@@ -68,17 +68,17 @@ For following JSON
         "Waterways": {
           "resources": [
             {
-              "name": "waterway_1.geojson",
+              "name": "hotosm_project_9_waterways_lines_geojson.zip",
               "format": "geojson",
               "description": "Waterway GeoJSON",
-              "url": "https://example.com/data/waterway_1.geojson",
+              "url": "https://example.com/data/hotosm_project_9_waterways_lines_geojson.zip",
               "last_modified": "2023-12-28T17:48:21.378667"
             },
             {
-              "name": "waterway_2.kml",
+              "name": "hotosm_project_9_waterways_lines_kml.zip",
               "format": "kml",
               "description": "Waterway KML",
-              "url": "https://example.com/data/waterway_2.kml",
+              "url": "https://example.com/data/hotosm_project_9_waterways_lines_kml.zip",
               "last_modified": "2023-12-28T17:48:21.378974"
             }
           ]
@@ -91,7 +91,7 @@ For following JSON
   "4a20c25a-a173-4082-a9e7-d5d6e7244809": "FAILURE"
 }
 ```
-In this example, the "Waterways" dataset contains two resources ("waterway_1.geojson" and "waterway_2.kml") within the task "a221affc-0e50-4231-92b5-3d0f4438f170". The total count of resources for this dataset is 2.
+In this example, the "Waterways" dataset contains two resources ("waterway_line_geojson" and "waterway_line_kml") within the task "a221affc-0e50-4231-92b5-3d0f4438f170". The total count of resources for this dataset is 2.
 
 **Metrics Breakdown:**
 
@@ -102,3 +102,6 @@ In this example, the "Waterways" dataset contains two resources ("waterway_1.geo
 - `total_resources`: 2 (Two resources in the "Waterways" dataset)
 - `total_elapsed_time`: "0:00:11" (Elapsed time from the start of the successful task to the last resource modification)
 - `resource_counts`: {"Waterways": 2} (Count of resources for the "Waterways" dataset, its the breakdown resource count for each dataset )
+
+** TM Definition ** 
+Each task reflects to single tasking manager project extraction request , For this example , for tasking manager project no 9 , It created task with task id ```a221affc-0e50-4231-92b5-3d0f4438f170```. From TM perspective it had mapping type ```waterways``` which reflected as a dataset in rawdata api , if there are multiple mapping type such as ```building```, ```roads``` they will be treated as 3 different datasets inside same task ! Inside each dataset it contains resources which are the actual exports files generated based on the geometry type and file format . On above example for ```waterways``` mapping type it generated two ```line``` resources because in input it was geometry type : ```line``` and export formats ```geojson``` and ```kml``` , if for some mapping type there are multiple geometry types such landuse then it will multiple the resources accordingly . No of resources for datasets = no of geometry_type * no of file_formats 
