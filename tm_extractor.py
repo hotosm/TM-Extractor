@@ -107,8 +107,8 @@ class ProjectProcessor:
 
     def retry_post_request(self, request_config):
         retry_strategy = Retry(
-            total=1,  # Number of retries
-            status_forcelist=[429],
+            total=2,  # Number of retries
+            status_forcelist=[429, 502],
             allowed_methods=["POST"],
             backoff_factor=1,
         )
@@ -184,21 +184,37 @@ class ProjectProcessor:
     def get_project_details(self, project_id):
         feature = {"type": "Feature", "properties": {}}
         project_api_url = f"{self.TM_API_BASE_URL}/projects/{project_id}/?as_file=false&abbreviated=false"
-        response = requests.get(project_api_url, timeout=20)
-        response.raise_for_status()
-        result = response.json()
-        feature["properties"]["mapping_types"] = result["mappingTypes"]
-        feature["properties"]["project_id"] = project_id
-        feature["geometry"] = result["areaOfInterest"]
-        return feature
+
+        max_retries = 3
+        for retry in range(max_retries):
+            try:
+                response = requests.get(project_api_url, timeout=20)
+                response.raise_for_status()
+                result = response.json()
+
+                feature["properties"]["mapping_types"] = result["mappingTypes"]
+                feature["properties"]["project_id"] = project_id
+                feature["geometry"] = result["areaOfInterest"]
+                return feature
+            except Exception as e:
+                logging.warn(f"Request failed (attempt {retry + 1}/{max_retries}): {e}")
+        raise Exception(
+            f"Failed to retrieve project details after {max_retries} attempts"
+        )
 
     def get_active_projects(self, time_interval):
-        active_projects_api_url = (
-            f"{self.TM_API_BASE_URL}/projects/queries/active/?interval={time_interval}"
-        )
-        response = requests.get(active_projects_api_url, timeout=10)
-        response.raise_for_status()
-        return response.json()["features"]
+        max_retries = 3
+        for retry in range(max_retries):
+            try:
+                active_projects_api_url = f"{self.TM_API_BASE_URL}/projects/queries/active/?interval={time_interval}"
+                response = requests.get(active_projects_api_url, timeout=10)
+                response.raise_for_status()
+                return response.json()["features"]
+            except Exception as e:
+                logging.warn(
+                    f" : Request failed (attempt {retry + 1}/{max_retries}): {e}"
+                )
+        raise Exception(f"Failed to fetch active projects {max_retries} attempts")
 
     def init_call(self, projects=None, fetch_active_projects=None):
         all_project_details = []
