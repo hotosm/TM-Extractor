@@ -101,4 +101,4 @@ In this example, the "Waterways" dataset contains two resources ("waterway_1.geo
 - `total_datasets`: 1 (Dataset "Waterways" in the successful task)
 - `total_resources`: 2 (Two resources in the "Waterways" dataset)
 - `total_elapsed_time`: "0:00:11" (Elapsed time from the start of the successful task to the last resource modification)
-- `dataset_counts`: {"Waterways": 2} (Count of resources for the "Waterways" dataset)
+- `resource_counts`: {"Waterways": 2} (Count of resources for the "Waterways" dataset, its the breakdown resource count for each dataset )
