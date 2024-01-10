@@ -100,8 +100,14 @@ In this example, the "Waterways" dataset contains two resources ("waterway_line_
 - `failed_tasks`: 1 (Task "4a20c25a-a173-4082-a9e7-d5d6e7244809" failed)
 - `total_datasets`: 1 (Dataset "Waterways" in the successful task)
 - `total_resources`: 2 (Two resources in the "Waterways" dataset)
-- `total_elapsed_time`: "0:00:11" (Elapsed time from the start of the successful task to the last resource modification)
+- `total_elapsed_time` (```hour:min:sec```): "0:00:11" (Elapsed time from the start of the successful task to the last resource modification) 
 - `resource_counts`: {"Waterways": 2} (Count of resources for the "Waterways" dataset, its the breakdown resource count for each dataset )
 
-** TM Definition ** 
-Each task reflects to single tasking manager project extraction request , For this example , for tasking manager project no 9 , It created task with task id ```a221affc-0e50-4231-92b5-3d0f4438f170```. From TM perspective it had mapping type ```waterways``` which reflected as a dataset in rawdata api , if there are multiple mapping type such as ```building```, ```roads``` they will be treated as 3 different datasets inside same task ! Inside each dataset it contains resources which are the actual exports files generated based on the geometry type and file format . On above example for ```waterways``` mapping type it generated two ```line``` resources because in input it was geometry type : ```line``` and export formats ```geojson``` and ```kml``` , if for some mapping type there are multiple geometry types such landuse then it will multiple the resources accordingly . No of resources for datasets = no of geometry_type * no of file_formats 
+**TM Definition:** 
+
+Each task reflects to single tasking manager project extraction request , For this example , for tasking manager project no 9 , It created task with task id ```a221affc-0e50-4231-92b5-3d0f4438f170```. From TM perspective it had mapping type ```waterways``` which reflected as a dataset in rawdata api , if there are multiple mapping type such as ```building```, ```roads``` they will be treated as 3 different datasets inside same task ! Inside each dataset it contains resources which are the actual exports files generated based on the geometry type and file format . On above example for ```waterways``` mapping type , it generated two ```line``` resources because in input it had -> geometry type : ```line``` and export formats ```geojson``` , ```kml```.  if for some mapping type there are multiple geometry types such as ```landuse``` then it will produce the resources accordingly . 
+
+- `no of resources for datasets` = no of geometry_type * no of file_formats 
+- `task` = TM Project extraction request 
+- `datasets` = TM Mapping Types 
+- `resources` = Actual exports wrt feature type and file formats 
