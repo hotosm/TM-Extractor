@@ -105,9 +105,9 @@ class ProjectProcessor:
             project["properties"].get("mapping_types"),
         )
 
-    def retry_post_request(self, request_config):
+    def retry_post_request(self, request_config, max_retries=3):
         retry_strategy = Retry(
-            total=2,  # Number of retries
+            total=max_retries,
             status_forcelist=[429, 502],
             allowed_methods=["POST"],
             backoff_factor=1,
@@ -132,8 +132,13 @@ class ProjectProcessor:
             response.raise_for_status()
             return response.json()["task_id"]
         except requests.exceptions.RetryError as e:
+            logging.warning(e)
             self.handle_rate_limit()
-            return self.retry_post_request(request_config)
+            return self.retry_post_request(request_config, max_retries - 1)
+        except requests.exceptions.RequestException as e:
+            if max_retries > 0:
+                return self.retry_post_request(request_config, max_retries - 1)
+            raise e
 
     def handle_rate_limit(self):
         logging.warning("Rate limit reached. Waiting for 1 minute before retrying.")
@@ -184,7 +189,6 @@ class ProjectProcessor:
     def get_project_details(self, project_id):
         feature = {"type": "Feature", "properties": {}}
         project_api_url = f"{self.TM_API_BASE_URL}/projects/{project_id}/?as_file=false&abbreviated=false"
-
         max_retries = 3
         for retry in range(max_retries):
             try:
@@ -196,11 +200,12 @@ class ProjectProcessor:
                 feature["properties"]["project_id"] = project_id
                 feature["geometry"] = result["areaOfInterest"]
                 return feature
-            except Exception as e:
-                logging.warn(f"Request failed (attempt {retry + 1}/{max_retries}): {e}")
-        raise Exception(
-            f"Failed to retrieve project details after {max_retries} attempts"
-        )
+            except Exception as ex:
+                logging.warning(
+                    "Request failed (attempt %s/%s): %s", retry + 1, max_retries, ex
+                )
+        logging.error("Failed to fetch project details %s after 3 retries", project_id)
+        return None
 
     def get_active_projects(self, time_interval):
         max_retries = 3
@@ -210,21 +215,23 @@ class ProjectProcessor:
                 response = requests.get(active_projects_api_url, timeout=10)
                 response.raise_for_status()
                 return response.json()["features"]
-            except Exception as e:
-                logging.warn(
-                    f" : Request failed (attempt {retry + 1}/{max_retries}): {e}"
+            except Exception as ex:
+                logging.warning(
+                    "Request failed (attempt %s/%s): %s", retry + 1, max_retries, ex
                 )
-        raise Exception(f"Failed to fetch active projects {max_retries} attempts")
+        logging.error("Failed to fetch active projects after 3 retries")
+        return None
 
     def init_call(self, projects=None, fetch_active_projects=None):
         all_project_details = []
 
         if projects:
+            logger.info("%s Tasking manager projects supplied", len(projects))
             for project_id in projects:
                 logger.info("Retrieving TM project %s", project_id)
-                all_project_details.append(
-                    self.get_project_details(project_id=project_id)
-                )
+                project_details = self.get_project_details(project_id=project_id)
+                if project_details:
+                    all_project_details.append(project_details)
 
         if fetch_active_projects:
             interval = fetch_active_projects
@@ -232,19 +239,21 @@ class ProjectProcessor:
                 "Retrieving active projects with an interval of the last %s hr",
                 interval,
             )
-            all_project_details.extend(self.get_active_projects(interval))
+            active_project_details = self.get_active_projects(interval)
+            logger.info("%s active projects fetched", len(active_project_details))
+            if active_project_details:
+                all_project_details.extend(active_project_details)
 
-        logger.info("Total %s projects fetched", len(all_project_details))
+        logger.info("Started processing %s projects in total", len(all_project_details))
         task_ids = []
         for project in all_project_details:
             task_id = self.process_project(project)
             if task_id is not None:
                 task_ids.append(task_id)
         logging.info(
-            "Request : All request to Raw Data API has been sent, Logging %s task_ids",
+            "Request : %s requests to Raw Data API has been sent",
             len(task_ids),
         )
-        logging.info(task_ids)
         return task_ids
 
 
