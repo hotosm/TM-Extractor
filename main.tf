@@ -1,5 +1,5 @@
 terraform {
-  required_version = "= 1.5.5"
+  required_version = "= 1.6.0"
 
   # Live modules pin exact provider version; generic modules let consumers pin the version.
   required_providers {
