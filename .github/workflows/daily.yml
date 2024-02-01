@@ -1,0 +1,25 @@
+name: Run daily cron projects
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Run every day at 0 UTC
+
+jobs:
+  Run-Scheduled-Exports:
+    runs-on: ubuntu-latest
+    env:
+      RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Shoot daily projects
+
+        run: python tm_extractor.py --fetch-active-projects 24
