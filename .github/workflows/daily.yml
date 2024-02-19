@@ -3,15 +3,16 @@ name: Run daily TM cron projects
 on:
   # schedule:
   #   - cron: "0 0 * * *" # Run every day at 0 UTC
-    
-  # Allow manual trigger
   workflow_dispatch:
-  
+    inputs:
+      projectHours:
+        description: 'Number of hours to fetch active projects (1-24)'
+        required: false
+        default: '24'  # Default value as a string
+
 jobs:
   Run-Scheduled-Exports:
     runs-on: ubuntu-latest
-    env:
-      RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
@@ -23,6 +24,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Shoot daily projects
+      - name: Determine project hours
+        id: project_hours
+        env:
+          MANUAL_INPUT: ${{ github.event.inputs.projectHours }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ] || [ -z "$MANUAL_INPUT" ] || ! [[ "$MANUAL_INPUT" =~ ^[0-9]+$ ]] || [ "$MANUAL_INPUT" -le 0 ] || [ "$MANUAL_INPUT" -gt 24 ]; then
+            echo "Using default value: 24"
+            echo "::set-output name=value::24"
+          else
+            echo "Using manual input: $MANUAL_INPUT"
+            echo "::set-output name=value::$MANUAL_INPUT"
+          fi
 
-        run: python tm_extractor.py --fetch-active-projects 24
+      - name: Shoot daily projects
+        run: python tm_extractor.py --fetch-active-projects ${{ steps.project_hours.outputs.value }}
+        env:
+          RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
