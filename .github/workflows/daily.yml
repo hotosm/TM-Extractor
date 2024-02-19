@@ -1,8 +1,8 @@
-name: Run daily cron projects
+name: Run daily TM cron projects
 
 on:
-  schedule:
-    - cron: "0 0 * * *" # Run every day at 0 UTC
+  # schedule:
+  #   - cron: "0 0 * * *" # Run every day at 0 UTC
     
   # Allow manual trigger
   workflow_dispatch:
