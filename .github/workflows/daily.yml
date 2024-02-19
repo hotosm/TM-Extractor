@@ -3,7 +3,10 @@ name: Run daily cron projects
 on:
   schedule:
     - cron: "0 0 * * *" # Run every day at 0 UTC
-
+    
+  # Allow manual trigger
+  workflow_dispatch:
+  
 jobs:
   Run-Scheduled-Exports:
     runs-on: ubuntu-latest
