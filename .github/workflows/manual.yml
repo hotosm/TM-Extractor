@@ -1,0 +1,27 @@
+name: Run manual TM projects extractions
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_ids:
+        description: 'Enter space-separated project IDs (e.g., "123 456 789")'
+        required: true
+
+jobs:
+  Run-Manual-TM-Projects-Report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch specified projects
+        run: python tm_extractor.py --projects ${{ github.event.inputs.project_ids }}
+        env:
+          RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
