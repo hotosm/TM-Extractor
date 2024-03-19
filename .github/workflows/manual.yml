@@ -1,4 +1,4 @@
-name: Run manual TM projects extractions
+name: Run specific project data extraction
 
 on:
   workflow_dispatch:
