@@ -3,7 +3,7 @@
         "type": "Polygon",
         "coordinates": []
     },
-    "queue": "raw_default",
+    "queue": "raw_ondemand",
     "dataset": {
         "dataset_prefix": "hotosm_project_1",
         "dataset_folder": "TM",
