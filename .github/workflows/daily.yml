@@ -1,8 +1,8 @@
 name: Run daily TM cron projects
 
 on:
-  # schedule:
-  #   - cron: "0 0 * * *" # Run every day at 0 UTC
+  schedule:
+    - cron: "0 0 * * *" # Run every day at 0 UTC
   workflow_dispatch:
     inputs:
       projectHours:
