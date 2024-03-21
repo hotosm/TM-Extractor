@@ -138,6 +138,8 @@ export RAWDATA_API_AUTH_TOKEN='my_token'
 
 - **`CONFIG_JSON`**: Path to the config JSON file. Default is `config.json`.
 
+- **`TASKING_MANAGER_API_KEY`**: [Optional] Tasking manager API key . Example : `Token your_token_key_from_tasking_manager`. Only required to fetch projects that requires authentication.
+
 ### Config JSON
 
 The `config.json` file contains configuration settings for the extraction process. It includes details about the dataset, categories, and geometry of the extraction area.

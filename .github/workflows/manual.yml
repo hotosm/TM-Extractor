@@ -6,6 +6,9 @@ on:
       project_ids:
         description: 'Enter space-separated project IDs (e.g., "123 456 789")'
         required: true
+      tasking_manager_api_key:
+        description: "Enter the TASKING MANAGER API KEY (leave blank if not applicable)"
+        required: false
 
 jobs:
   Run-Manual-TM-Projects-Report:
@@ -25,3 +28,4 @@ jobs:
         run: python tm_extractor.py --projects ${{ github.event.inputs.project_ids }}
         env:
           RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
+          TASKING_MANAGER_API_KEY: ${{ github.event.inputs.tasking_manager_api_key || 'None' }}

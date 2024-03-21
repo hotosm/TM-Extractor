@@ -6,9 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       projectHours:
-        description: 'Number of hours to fetch active projects (1-24)'
+        description: "Number of hours to fetch active projects (1-24)"
         required: false
-        default: '24'  # Default value as a string
+        default: "24" # Default value as a string
+      tasking_manager_api_key:
+        description: "Enter the TASKING MANAGER API KEY (leave blank if not applicable)"
+        required: false
 
 jobs:
   Run-Scheduled-Exports:
@@ -41,3 +44,4 @@ jobs:
         run: python tm_extractor.py --fetch-active-projects ${{ steps.project_hours.outputs.value }}
         env:
           RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
+          TASKING_MANAGER_API_KEY: ${{ github.event.inputs.tasking_manager_api_key || 'None' }}

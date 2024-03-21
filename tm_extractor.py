@@ -45,6 +45,7 @@ class ProjectProcessor:
             "https://tasking-manager-tm4-production-api.hotosm.org/api/v2",
         )
         self.RAWDATA_API_AUTH_TOKEN = os.environ.get("RAWDATA_API_AUTH_TOKEN")
+        self.TASKING_MANAGER_API_KEY = os.environ.get("TASKING_MANAGER_API_KEY", None)
 
     def get_mapping_list(self, input_value):
         if isinstance(input_value, int):
@@ -192,7 +193,10 @@ class ProjectProcessor:
         max_retries = 3
         for retry in range(max_retries):
             try:
-                response = requests.get(project_api_url, timeout=20)
+                headers = {"accept": "application/json"}
+                if self.TASKING_MANAGER_API_KEY:
+                    headers["Authorization"] = self.TASKING_MANAGER_API_KEY
+                response = requests.get(project_api_url, timeout=20, headers=headers)
                 response.raise_for_status()
                 result = response.json()
 
@@ -212,7 +216,12 @@ class ProjectProcessor:
         for retry in range(max_retries):
             try:
                 active_projects_api_url = f"{self.TM_API_BASE_URL}/projects/queries/active/?interval={time_interval}"
-                response = requests.get(active_projects_api_url, timeout=10)
+                headers = {"accept": "application/json"}
+                if self.TASKING_MANAGER_API_KEY:
+                    headers["Authorization"] = self.TASKING_MANAGER_API_KEY
+                response = requests.get(
+                    active_projects_api_url, timeout=10, headers=headers
+                )
                 response.raise_for_status()
                 return response.json()["features"]
             except Exception as ex:
@@ -303,6 +312,11 @@ def main():
     config_json = os.environ.get("CONFIG_JSON", "config.json")
     if os.environ.get("RAWDATA_API_AUTH_TOKEN", None) is None:
         raise ValueError("RAWDATA_API_AUTH_TOKEN environment variable not found.")
+
+    if os.environ.get("TASKING_MANAGER_API_KEY", None) is None:
+        print(
+            "Tasking manager API key is not supplied , Authenticated endpoint won't be available"
+        )
 
     project_processor = ProjectProcessor(config_json)
     task_ids = project_processor.init_call(
