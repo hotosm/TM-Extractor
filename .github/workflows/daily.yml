@@ -5,6 +5,10 @@ on:
     - cron: "0 0 * * *" # Run every day at 0 UTC
   workflow_dispatch:
     inputs:
+      raw_data_api_url:
+        description: "Enter Raw data url"
+        default: "https://api-prod.raw-data.hotosm.org/v1"
+        required: false 
       projectHours:
         description: "Number of hours to fetch active projects (1-24)"
         required: false
@@ -43,5 +47,6 @@ jobs:
       - name: Shoot daily projects
         run: python tm_extractor.py --fetch-active-projects ${{ steps.project_hours.outputs.value }}
         env:
+          RAW_DATA_API_BASE_URL: ${{ github.event.inputs.raw_data_api_url }}
           RAWDATA_API_AUTH_TOKEN: ${{ secrets.RAWDATA_API_AUTH_TOKEN }}
           TASKING_MANAGER_API_KEY: ${{ github.event.inputs.tasking_manager_api_key || 'None' }}
