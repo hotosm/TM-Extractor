@@ -83,6 +83,14 @@ class ProjectProcessor:
         project_id = project["properties"].get("project_id")
 
         mapping_types = []
+        mapping_types = project["properties"].get("mapping_types")
+        if mapping_types is None :
+            logging.warning(
+                "Mapping types not found for project %s. Skipping this project.",
+                project_id,
+            )
+            return
+        
         for item in project["properties"].get("mapping_types"):
             mapping_type_return = self.get_mapping_list(item)
             if mapping_type_return is not None:
