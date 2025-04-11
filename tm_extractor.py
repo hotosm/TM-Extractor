@@ -82,31 +82,26 @@ class ProjectProcessor:
         geometry = project["geometry"]
         project_id = project["properties"].get("project_id")
 
-        mapping_types = []
         mapping_types = project["properties"].get("mapping_types")
-        if mapping_types is None :
-            logging.warning(
-                "Mapping types not found for project %s. Skipping this project.",
-                project_id,
-            )
-            return
-        
-        for item in project["properties"].get("mapping_types"):
-            mapping_type_return = self.get_mapping_list(item)
-            if mapping_type_return is not None:
-                mapping_types.append(mapping_type_return)
+        if mapping_types:
+            for item in mapping_types:
+                mapping_type_return = self.get_mapping_list(item)
+                if mapping_type_return is not None:
+                    mapping_types.append(mapping_type_return)
 
-        if len(mapping_types) > 0:
-            request_config = self.generate_filtered_config(
-                project_id=project_id, mapping_types=mapping_types, geometry=geometry
-            )
-            logging.info(
-                "Sending Request to Rawdataapi for %s with %s",
-                project_id,
-                mapping_types,
-            )
-            response = self.retry_post_request(request_config)
-            return response
+            if len(mapping_types) > 0:
+                request_config = self.generate_filtered_config(
+                    project_id=project_id,
+                    mapping_types=mapping_types,
+                    geometry=geometry,
+                )
+                logging.info(
+                    "Sending Request to Rawdataapi for %s with %s",
+                    project_id,
+                    mapping_types,
+                )
+                response = self.retry_post_request(request_config)
+                return response
 
         logging.info(
             "Skipped %s , Mapping type %s not supported yet",
