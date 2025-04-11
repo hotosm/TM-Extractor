@@ -81,20 +81,21 @@ class ProjectProcessor:
     def process_project(self, project):
         geometry = project["geometry"]
         project_id = project["properties"].get("project_id")
+        mapping_types = []
+        mapping_types_raw = project["properties"].get("mapping_types")
 
-        mapping_types = project["properties"].get("mapping_types")
-        if mapping_types:
-            for item in mapping_types:
+        if mapping_types_raw:
+            for item in mapping_types_raw:
                 mapping_type_return = self.get_mapping_list(item)
                 if mapping_type_return is not None:
                     mapping_types.append(mapping_type_return)
-
             if len(mapping_types) > 0:
                 request_config = self.generate_filtered_config(
                     project_id=project_id,
                     mapping_types=mapping_types,
                     geometry=geometry,
                 )
+
                 logging.info(
                     "Sending Request to Rawdataapi for %s with %s",
                     project_id,
@@ -260,6 +261,7 @@ class ProjectProcessor:
         task_ids = []
         for project in all_project_details:
             task_id = self.process_project(project)
+            print(task_id)
             if task_id is not None:
                 task_ids.append(task_id)
         logging.info(
