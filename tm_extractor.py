@@ -42,7 +42,7 @@ class ProjectProcessor:
         self.RAW_DATA_SNAPSHOT_URL = f"{self.RAW_DATA_API_BASE_URL}/custom/snapshot/"
         self.TM_API_BASE_URL = os.environ.get(
             "TM_API_BASE_URL",
-            "https://tasking-manager-tm4-production-api.hotosm.org/api/v2",
+            "https://tasking-manager-production-api.hotosm.org/api/v2",
         )
         self.RAWDATA_API_AUTH_TOKEN = os.environ.get("RAWDATA_API_AUTH_TOKEN")
         self.TASKING_MANAGER_API_KEY = os.environ.get("TASKING_MANAGER_API_KEY", None)
