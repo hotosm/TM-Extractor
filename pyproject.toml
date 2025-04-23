@@ -1,0 +1,11 @@
+[project]
+name = "tm-extractor"
+version = "0.1.0"
+description = "Data Exports for Tasking Manager Projects"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "aiohttp>=3.11.18",
+    "dotenv>=0.9.9",
+    "tqdm>=4.67.1",
+]
